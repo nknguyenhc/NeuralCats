@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DropdownIcon from "../icons/dropdown-icon";
 
 export type DropdownItemType = {
@@ -8,18 +8,26 @@ export type DropdownItemType = {
   data: string,
 }
 
-const Dropdown = ({ items, onSelect }: {
+const Dropdown = ({ items, onSelect, initialItem }: {
   items: Array<DropdownItemType>,
   onSelect: (itemData: string) => void,
+  initialItem?: () => string | null | undefined,
 }): JSX.Element => {
   const [itemText, setItemText] = useState<string | undefined>();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const handleClick = useCallback((item: DropdownItemType) => {
+  const handleClick = useCallback((item: DropdownItemType) => () => {
     setItemText(item.text);
     onSelect(item.data);
     setIsExpanded(false);
   }, [onSelect]);
+
+  useEffect(() => {
+    if (initialItem && initialItem() && items.map(item => item.data).includes(initialItem()!)) {
+      const index = items.map(item => item.data).indexOf(initialItem()!);
+      setItemText(items[index].text);
+    }
+  }, [initialItem, items]);
 
   return <div css={dropdownCss}>
     <div css={inputCss} onClick={() => setIsExpanded(isExpanded => !isExpanded)}>
@@ -34,7 +42,7 @@ const Dropdown = ({ items, onSelect }: {
       {items.map(item => (
         <div
           key={item.data}
-          onClick={() => handleClick(item)}
+          onClick={handleClick(item)}
           css={listItemCss}
         >
           {item.text}

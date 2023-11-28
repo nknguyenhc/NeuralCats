@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useAppSelector } from "../../redux/hooks";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Dropdown, { DropdownItemType } from "../dropdown/dropdown";
+import { useSearchParams } from "react-router-dom";
 
 const Qna = (): JSX.Element => {
   const mods = useAppSelector(state => state.mods.mods);
@@ -12,7 +13,13 @@ const Qna = (): JSX.Element => {
     data: mod.code,
   })), [mods]);
   const [isError, setIsError] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<any>();
+
+  const handleClick = useCallback((mod: string) => {
+    setModSelected(mod);
+    setSearchParams({ mod });
+  }, [setSearchParams]);
 
   const handleGet = useCallback(() => {
     if (modSelected === undefined) {
@@ -26,6 +33,14 @@ const Qna = (): JSX.Element => {
       .then(res => setData(res));
   }, [modSelected]);
 
+  useEffect(() => {
+    if (searchParams.get('mod') && mods.map(mod => mod.code).includes(searchParams.get('mod')!)) {
+      handleClick(searchParams.get('mod')!);
+    }
+  }, [searchParams, mods, handleClick]);
+
+  const initialItem = () => searchParams.get('mod');
+
   return <div css={qnaCss}>
     <div css={titleCss}>Get your practice quiz!</div>
     <div css={mainCss}>
@@ -34,7 +49,8 @@ const Qna = (): JSX.Element => {
           <div>Module:</div>
           <Dropdown
             items={modDropdownItems}
-            onSelect={setModSelected}
+            onSelect={handleClick}
+            initialItem={initialItem}
           />
         </div>
         <div css={getQuizButtonCss} onClick={handleGet}>Get quiz!</div>
