@@ -2,12 +2,27 @@
 import { css } from '@emotion/react';
 import NavBar from './components/navbar/navbar';
 import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAppDispatch } from './redux/hooks';
+import { setMods } from './redux/mods';
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    fetch('/qna/available-mods')
+      .then(res => res.json())
+      .then(res => {
+        dispatch(setMods(res));
+      });
+  }, [dispatch]);
+
   return (
-    <div className="App" css={appCss}>
+    <div css={appCss}>
       <NavBar />
-      <Outlet />
+      <div css={mainCss}>
+        <Outlet />
+      </div>
     </div>
   );
 }
@@ -24,6 +39,10 @@ const appCss = css`
       color: black;
     }
   }
+`;
+
+const mainCss = css`
+  flex-grow: 1;
 `;
 
 export default App;

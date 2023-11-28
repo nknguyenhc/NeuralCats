@@ -315,7 +315,7 @@ def prompt():
                     }
                 You will see the pairs are sorted by the first element.
         """},
-        {"role": "user", "content": "What are generics and how are they useful?"}
+        {"role": "user", "content": "What are generic methods?"}
     ]
     )
 

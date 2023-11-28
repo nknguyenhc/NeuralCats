@@ -25,12 +25,12 @@ const NavBar = (): JSX.Element => {
 
 const navbarCss = (isClosed: boolean) => css`
   background-color: #f772e8;
-  box-sizing: border-box;
   width: ${isClosed ? "0px" : "300px"};
   height: 100vh;
   padding: 50px ${isClosed ? "0px" : "70px"};
   position: relative;
   transition: width 0.3s linear, padding 0.3s linear;
+  flex-shrink: 0;
 `;
 
 const linkContainerCss = css`
