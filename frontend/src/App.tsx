@@ -1,27 +1,29 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
-import { fetchData } from './fetch/fetch';
+import NavBar from './components/navbar/navbar';
+import { Outlet } from 'react-router-dom';
 
 function App() {
-  const [data, setData] = useState<any>('');
-
-  useEffect(() => {
-    fetchData('/qna', {
-      mod: "CS2030S",
-    }).then(res => setData(res));
-  }, []);
-
   return (
-    <div className="App" css={sampleCss}>
-      Hello, world! Data from backend: 
-      {JSON.stringify(data)}
+    <div className="App" css={appCss}>
+      <NavBar />
+      <Outlet />
     </div>
   );
 }
 
-const sampleCss = css`
-  color: red;
+const appCss = css`
+  display: flex;
+  flex-direction: row;
+
+  a {
+    text-decoration: none;
+    color: black;
+
+    &:visited {
+      color: black;
+    }
+  }
 `;
 
 export default App;
