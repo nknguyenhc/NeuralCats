@@ -1,4 +1,4 @@
-from model.qna import get_answer
+from model.qna import get_answer, prompt
 import sys
 import os
 from fastapi import FastAPI
@@ -34,4 +34,5 @@ async def root():
 
 if __name__ == '__main__':
     if sys.argv[1] == 'model-test':
-        get_answer("Why does the module chooses Java?")
+        # get_answer("Why does the module chooses Java?")
+        prompt()
