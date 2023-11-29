@@ -39,6 +39,10 @@ const appCss = css`
       color: black;
     }
   }
+
+  input {
+    font-size: 20px;
+  }
 `;
 
 const mainCss = css`

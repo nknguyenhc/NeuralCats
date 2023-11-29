@@ -4,6 +4,7 @@ import { useAppSelector } from "../../redux/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Dropdown, { DropdownItemType } from "../dropdown/dropdown";
 import { useSearchParams } from "react-router-dom";
+import Button from "../button/button";
 
 const Qna = (): JSX.Element => {
   const mods = useAppSelector(state => state.mods.mods);
@@ -53,7 +54,7 @@ const Qna = (): JSX.Element => {
             initialItem={initialItem}
           />
         </div>
-        <div css={getQuizButtonCss} onClick={handleGet}>Get quiz!</div>
+        <Button text="Get quiz!" onClick={handleGet} />
       </div>
       {isError && <div css={errorCss}>Please select a module!</div>}
       <div>{JSON.stringify(data)}</div>
@@ -93,17 +94,6 @@ const moduleSelectorCss = css`
   flex-direction: row;
   gap: 20px;
   align-items: center;
-`;
-
-const getQuizButtonCss = css`
-  padding: 8px;
-  border: 1px #c933ff solid;
-  border-radius: 10px;
-  cursor: pointer;
-
-  &:hover {
-    border: 1px #8f02c2 solid;
-  }
 `;
 
 const errorCss = css`
