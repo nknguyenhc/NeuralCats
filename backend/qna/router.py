@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 qna_router = APIRouter(
     prefix="/qna",
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": "Not found" }},
 )
 
 @qna_router.get("/available-mods")

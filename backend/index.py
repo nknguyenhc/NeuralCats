@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from qna.router import qna_router
+from upload.router import upload_router
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,6 +24,7 @@ if os.environ.get("ENV") == "development":
 
 # routers
 app.include_router(qna_router)
+app.include_router(upload_router)
 
 # static files
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -4,6 +4,7 @@ import { ChangeEvent, useCallback, useState } from "react";
 import Button from "../button/button";
 import TextInput from "../input/text-input";
 import FilesInput from "../input/files-input";
+import { postFormData } from "../../fetch/fetch";
 
 const Upload = (): JSX.Element => {
   const [moduleName, setModuleName] = useState<string>('');
@@ -21,6 +22,13 @@ const Upload = (): JSX.Element => {
   const handleDeleteFile = useCallback((fileToDelete: File) => () => {
     setFiles(files => files.filter(file => file !== fileToDelete));
   }, []);
+
+  const handleUpload = useCallback(() => {
+    postFormData('/request', {
+      files: files,
+      module: moduleName,
+    }).then(res => console.log(res));
+  }, [files, moduleName]);
 
   return <div css={uploadCss}>
     <div css={titleCss}>Upload a module material</div>
@@ -54,7 +62,7 @@ const Upload = (): JSX.Element => {
         ))}
       </table>
       <div css={submitButtonCss}>
-        <Button text="Submit Request" onClick={() => {}} />
+        <Button text="Submit Request" onClick={handleUpload} />
       </div>
     </div>
   </div>;
