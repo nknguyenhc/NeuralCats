@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Dropdown, { DropdownItemType } from "../dropdown/dropdown";
 import { useSearchParams } from "react-router-dom";
 import Button from "../button/button";
+import LoadingIcon from "../loader/loading-icon";
 
 const Qna = (): JSX.Element => {
   const mods = useAppSelector(state => state.mods.mods);
@@ -15,6 +16,7 @@ const Qna = (): JSX.Element => {
   })), [mods]);
   const [isError, setIsError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>();
 
   const handleClick = useCallback((mod: string) => {
@@ -28,10 +30,14 @@ const Qna = (): JSX.Element => {
       return;
     }
     setIsError(false);
-
+    setIsLoading(true);
+    setData(undefined);
     fetch(`/qna?mod=${modSelected}`)
       .then(res => res.json())
-      .then(res => setData(res));
+      .then(res => {
+        setData(res);
+        setIsLoading(false);
+      });
   }, [modSelected]);
 
   useEffect(() => {
@@ -57,6 +63,7 @@ const Qna = (): JSX.Element => {
         <Button text="Get quiz!" onClick={handleGet} />
       </div>
       {isError && <div css={errorCss}>Please select a module!</div>}
+      {isLoading && <LoadingIcon />}
       <div>{JSON.stringify(data)}</div>
     </div>
   </div>;

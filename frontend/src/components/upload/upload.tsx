@@ -6,6 +6,7 @@ import TextInput from "../input/text-input";
 import FilesInput from "../input/files-input";
 import { Dict, postFormData } from "../../fetch/fetch";
 import Modal from "../modal/modal";
+import LoadingIcon from "../loader/loading-icon";
 
 const Upload = (): JSX.Element => {
   const [moduleName, setModuleName] = useState<string>('');
@@ -25,6 +26,7 @@ const Upload = (): JSX.Element => {
     files: [],
   });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleAddFile = useCallback((e: ChangeEvent) => {
     if ((e.target as HTMLInputElement).files) {
@@ -73,10 +75,12 @@ const Upload = (): JSX.Element => {
       return;
     }
 
+    setIsLoading(true);
     postFormData('/request/', {
       files: files,
       module: moduleName,
     }).then(res => {
+      setIsLoading(false);
       if (res.message === 'success') {
         setSubmittedData({
           module: (res.info as Dict).module as string,
@@ -132,6 +136,7 @@ const Upload = (): JSX.Element => {
         {error.files && <div css={errorCss}>Please upload at least one file!</div>}
       </div>
     </div>
+    {isLoading && <LoadingIcon />}
     <Modal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)}>
       <div>Your request has been submitted!</div>
       <div>
