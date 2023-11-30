@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from model.qna import get_answer, prompt
 import sys
 import os
@@ -7,9 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from qna.router import qna_router
 from upload.router import upload_router
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = FastAPI()
 

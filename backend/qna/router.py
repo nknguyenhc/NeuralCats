@@ -1,23 +1,28 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from azure.cosmos.cosmos_client import CosmosClient
+import os
 
 qna_router = APIRouter(
     prefix="/qna",
     responses={404: {"description": "Not found" }},
 )
 
+def get_container():
+    client = CosmosClient(os.environ.get('COSMOS_HOST'), { 'masterKey': os.environ.get('COSMOS_KEY') })
+    db = client.get_database_client(os.environ.get('COSMOS_DB_ID'))
+    return db.get_container_client('Modules')
+
 @qna_router.get("/available-mods")
 async def get_available_mods():
-    return [
-        {
-            "fullname": "CS2030S - Programming Methodology II",
-            "code": "CS2030S",
-        },
-        {
-            "fullname": "IS1108 - Digital Ethics and Data Privacy",
-            "code": "IS1108",
-        },
-    ]
+    values = get_container().read_all_items()
+    return list(map(
+        lambda item: ({
+            "fullname": item["fullname"],
+            "code": item["code"],
+        }),
+        values,
+    ))
 
 @qna_router.get("/")
 async def get_qna(mod: str):
