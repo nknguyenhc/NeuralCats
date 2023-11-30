@@ -1,6 +1,6 @@
 
-type Dict = {
-    [key: string]: string | Dict | Array<Dict>,
+export type Dict = {
+    [key: string]: string | Dict | Array<string> | Array<Dict>,
 }
 
 export const postData = async (path: string, object: Dict): Promise<Dict> => {

@@ -4,11 +4,27 @@ import { ChangeEvent, useCallback, useState } from "react";
 import Button from "../button/button";
 import TextInput from "../input/text-input";
 import FilesInput from "../input/files-input";
-import { postFormData } from "../../fetch/fetch";
+import { Dict, postFormData } from "../../fetch/fetch";
+import Modal from "../modal/modal";
 
 const Upload = (): JSX.Element => {
   const [moduleName, setModuleName] = useState<string>('');
   const [files, setFiles] = useState<Array<File>>([]);
+  const [error, setError] = useState<{
+    moduleName: boolean,
+    files: boolean,
+  }>({
+    moduleName: false,
+    files: false,
+  });
+  const [submittedData, setSubmittedData] = useState<{
+    module: string,
+    files: Array<string>,
+  }>({
+    module: '',
+    files: [],
+  });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleAddFile = useCallback((e: ChangeEvent) => {
     if ((e.target as HTMLInputElement).files) {
@@ -24,10 +40,49 @@ const Upload = (): JSX.Element => {
   }, []);
 
   const handleUpload = useCallback(() => {
+    let isError = false;
+
+    if (moduleName.trim() === '') {
+      isError = true;
+      setError(error => ({
+        ...error,
+        moduleName: true,
+      }));
+    } else {
+      setError(error => ({
+        ...error,
+        moduleName: false,
+      }));
+    }
+    if (files.length === 0) {
+      isError = true;
+      setError(error => ({
+        ...error,
+        files: true,
+      }));
+    } else {
+      setError(error => ({
+        ...error,
+        files: false,
+      }));
+    }
+
+    if (isError) {
+      return;
+    }
+
     postFormData('/request', {
       files: files,
       module: moduleName,
-    }).then(res => console.log(res));
+    }).then(res => {
+      if (res.message === 'success') {
+        setSubmittedData({
+          module: (res.info as Dict).module as string,
+          files: ((res.info as Dict).files as Array<Dict>).map(file => file.original as string),
+        });
+        setIsModalOpen(true);
+      }
+    });
   }, [files, moduleName]);
 
   return <div css={uploadCss}>
@@ -44,27 +99,63 @@ const Upload = (): JSX.Element => {
         </div>
       </div>
       <table css={tableCss}>
-        <tr>
-          <th css={numberHeaderCss}>Number</th>
-          <th css={filenameHeaderCss}>File name</th>
-          <th css={actionHeaderCss}>Action</th>
-        </tr>
-        {files?.map((file, fileIndex) => (
-          <tr key={fileIndex}>
-            <td>{fileIndex + 1}</td>
-            <td>
-              <a target="_blank" rel="noreferrer" css={fileLinkCss} href={URL.createObjectURL(file)}>{file.name}</a>
-            </td>
-            <td>
-              <div css={deleteCss} onClick={handleDeleteFile(file)}>Delete</div>
-            </td>
+        <thead>
+          <tr>
+            <th css={numberHeaderCss}>Number</th>
+            <th css={filenameHeaderCss}>File name</th>
+            <th css={actionHeaderCss}>Action</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {files?.map((file, fileIndex) => (
+            <tr key={fileIndex}>
+              <td>{fileIndex + 1}</td>
+              <td>
+                <a target="_blank" rel="noreferrer" css={fileLinkCss} href={URL.createObjectURL(file)}>{file.name}</a>
+              </td>
+              <td>
+                <div css={deleteCss} onClick={handleDeleteFile(file)}>Delete</div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
       <div css={submitButtonCss}>
         <Button text="Submit Request" onClick={handleUpload} />
       </div>
+      <div css={errorBlockCss}>
+        {error.moduleName && <div css={errorCss}>Please indicate the module name!</div>}
+        {error.files && <div css={errorCss}>Please upload at least one file!</div>}
+      </div>
     </div>
+    <Modal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)}>
+      <div>Your request has been submitted!</div>
+      <div>
+        <div>
+          <div>Module name:</div>
+          <div>{submittedData.module}</div>
+        </div>
+        <div>
+          <div>Files:</div>
+          <table css={tableCss}>
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>File name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {submittedData.files.map((filename, fileIndex) => (
+                <tr key={fileIndex}>
+                  <td>{fileIndex + 1}</td>
+                  <td>{filename}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Modal>
   </div>;
 };
 
@@ -139,6 +230,17 @@ const deleteCss = css`
 
 const submitButtonCss = css`
   align-self: flex-end;
+`;
+
+const errorBlockCss = css`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const errorCss = css`
+  font-size: 16px;
+  color: red;
 `;
 
 export default Upload;
