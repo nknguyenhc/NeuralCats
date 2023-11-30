@@ -28,7 +28,8 @@ const navbarCss = (isClosed: boolean) => css`
   width: ${isClosed ? "0px" : "300px"};
   height: 100vh;
   padding: 50px ${isClosed ? "0px" : "70px"};
-  position: relative;
+  position: sticky;
+  top: 0px;
   transition: width 0.3s linear, padding 0.3s linear;
   flex-shrink: 0;
 `;
@@ -59,7 +60,7 @@ const openIconCss = (isClosed: boolean) => css`
   position: absolute;
   top: 10px;
   left: 10px;
-  ${isClosed ? "" : "z-index: -1;"}
+  ${isClosed ? "" : "display: none;"}
 `;
 
 export default NavBar;

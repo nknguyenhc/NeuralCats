@@ -28,10 +28,12 @@ const Upload = (): JSX.Element => {
 
   const handleAddFile = useCallback((e: ChangeEvent) => {
     if ((e.target as HTMLInputElement).files) {
+      const newFiles = Array.from((e.target as HTMLInputElement).files!);
       setFiles(files => [
         ...files,
-        ...Array.from((e.target as HTMLInputElement).files!),
+        ...newFiles,
       ]);
+      (e.target as HTMLInputElement).value = '';
     }
   }, []);
 
@@ -71,7 +73,7 @@ const Upload = (): JSX.Element => {
       return;
     }
 
-    postFormData('/request', {
+    postFormData('/request/', {
       files: files,
       module: moduleName,
     }).then(res => {
@@ -81,6 +83,8 @@ const Upload = (): JSX.Element => {
           files: ((res.info as Dict).files as Array<Dict>).map(file => file.original as string),
         });
         setIsModalOpen(true);
+        setModuleName('');
+        setFiles([]);
       }
     });
   }, [files, moduleName]);
@@ -91,7 +95,7 @@ const Upload = (): JSX.Element => {
       <div css={inputGroupCss}>
         <div css={inputCss}>
           <div>Module code and name:</div>
-          <TextInput onChange={(e) => setModuleName((e.target as HTMLInputElement).value)} />
+          <TextInput value={moduleName} onChange={(e) => setModuleName((e.target as HTMLInputElement).value)} />
         </div>
         <div css={inputCss}>
           <div>Module materials</div>
@@ -192,6 +196,7 @@ const inputCss = css`
   display: flex;
   flex-direction: row;
   gap: 20px;
+  align-items: center;
 `;
 
 const tableCss = css`

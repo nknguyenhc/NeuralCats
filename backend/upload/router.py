@@ -37,7 +37,6 @@ async def upload(files: List[UploadFile], module: Annotated[str, Form()]):
 
     container_client = get_storage()
     for file, filename in zip(files, filenames):
-        print(f"{request_id}-{filename['modified']}")
         blob_client = container_client.get_blob_client(blob=f"{request_id}_{filename['modified']}_{filename['original']}")
         blob_client.upload_blob(file.file)
 

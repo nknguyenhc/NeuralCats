@@ -2,10 +2,11 @@
 import { css } from "@emotion/react";
 import { ChangeEvent } from "react";
 
-const TextInput = ({ onChange }: {
+const TextInput = ({ value, onChange }: {
+  value: string,
   onChange: (e: ChangeEvent) => void,
 }): JSX.Element => {
-  return <input css={inputCss} type="text" onChange={onChange} />
+  return <input css={inputCss} type="text" value={value} onChange={onChange} />
 };
 
 const inputCss = css`
