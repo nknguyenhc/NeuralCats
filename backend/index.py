@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from qna.router import qna_router
 from upload.router import upload_router
+from users.router import auth_router
 
 app = FastAPI()
 
@@ -26,6 +27,7 @@ if os.environ.get("ENV") == "development":
 # routers
 app.include_router(qna_router)
 app.include_router(upload_router)
+app.include_router(auth_router)
 
 # static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
