@@ -121,11 +121,11 @@ const Upload = (): JSX.Element => {
         <tbody>
           {files?.map((file, fileIndex) => (
             <tr key={fileIndex}>
-              <td>{fileIndex + 1}</td>
+              <td css={centerCellCss}>{fileIndex + 1}</td>
               <td>
                 <a target="_blank" rel="noreferrer" css={fileLinkCss} href={URL.createObjectURL(file)}>{file.name}</a>
               </td>
-              <td>
+              <td css={centerCellCss}>
                 <div css={deleteCss} onClick={handleDeleteFile(file)}>Delete</div>
               </td>
             </tr>
@@ -232,6 +232,11 @@ const actionHeaderCss = css`
 
 const fileLinkCss = css`
   text-decoration: underline !important;
+  width: fit-content;
+`;
+
+const centerCellCss = css`
+  text-align: center;
 `;
 
 const deleteCss = css`
