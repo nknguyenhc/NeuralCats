@@ -6,8 +6,9 @@ from datetime import datetime
 from copy import copy
 
 class User:
-    def __init__(self, username):
+    def __init__(self, username, is_staff):
         self.username = username
+        self.is_staff = is_staff
 
     def get_container():
         client = CosmosClient(os.environ.get('COSMOS_HOST'), { 'masterKey': os.environ.get('COSMOS_KEY') })
@@ -39,8 +40,9 @@ class User:
             "password": User.hash_password(password),
             "token": User.hash_password(token),
             "expiry": User.get_next_expiry(),
+            "staff": False,
         })
-        return User(username), token
+        return User(username, False), token
     
     def authenticate(username, password):
         container = User.get_container()
@@ -67,7 +69,7 @@ class User:
         new_item["expiry"] = User.get_next_expiry()
         container.delete_item(item=item["id"], partition_key=[item["username"], item["token"]])
         container.create_item(body=new_item)
-        return User(username), token
+        return User(username, item["staff"]), token
     
     def get_next_expiry():
         return datetime.now().timestamp() + 3 * 24 * 3600
@@ -85,10 +87,11 @@ class User:
         ))
         if len(items) == 0:
             return None
-        if items[0]["expiry"] < datetime.now().timestamp():
+        item = items[0]
+        if item["expiry"] < datetime.now().timestamp():
             return None
         
-        return User(items[0]["username"])
+        return User(item["username"], item["staff"])
     
     def hash_password(password):
         return hashlib.sha256(password.encode()).hexdigest()
@@ -106,13 +109,28 @@ class User:
             enable_cross_partition_query=True,
         ))[0]
         
-        token = str(uuid4())
         new_item = copy(item)
-        new_item["token"] = User.hash_password(token)
         new_item["expiry"] = User.get_next_expiry()
         container.delete_item(item=item["id"], partition_key=[item["username"], item["token"]])
         container.create_item(body=new_item)
-        return token
+    
+    def delete_session(self):
+        container = User.get_container()
+        item = list(container.query_items(
+            query="SELECT * FROM r WHERE r.username=@username",
+            parameters=[
+                {
+                    "name": "@username",
+                    "value": self.username,
+                },
+            ],
+            enable_cross_partition_query=True,
+        ))[0]
+
+        new_item = copy(item)
+        new_item["expiry"] = datetime.now().timestamp()
+        container.delete_item(item=item["id"], partition_key=[item["username"], item["token"]])
+        container.create_item(body=new_item)
 
 class InvalidUsernameException(Exception):
     pass 

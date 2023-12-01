@@ -7,6 +7,8 @@ import LoadingIcon from "../loader/loading-icon";
 import { useNavigate } from "react-router-dom";
 import { postData } from "../../fetch/fetch";
 import Modal from "../modal/modal";
+import { useAppDispatch } from "../../redux/hooks";
+import { login } from "../../redux/auth";
 
 const Register = (): JSX.Element => {
   const [username, setUsername] = useState<string>('');
@@ -25,6 +27,7 @@ const Register = (): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
   
   const handleSubmit = useCallback(() => {
     if (isLoading) {
@@ -81,8 +84,14 @@ const Register = (): JSX.Element => {
       setIsLoading(false);
       setIsError(res.message !== 'success');
       setIsModalOpen(true);
+      if (res.message === 'success') {
+        dispatch(login({
+          username: username,
+          isStaff: false,
+        }));
+      }
     });
-  }, [username, password, confirmPassword, isLoading]);
+  }, [username, password, confirmPassword, isLoading, dispatch]);
 
   const closeModal = useCallback(() => {
     if (isError) {

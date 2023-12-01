@@ -3,7 +3,7 @@ export type Dict = {
     [key: string]: string | Dict | Array<string> | Array<Dict>,
 }
 
-export const postData = async (path: string, object: Dict): Promise<Dict> => {
+export const postData = async (path: string, object: Dict): Promise<any> => {
     return fetch(path, {
         method: 'POST',
         headers: {
@@ -17,7 +17,7 @@ type FormDataType = {
     [key: string]: string | File | Array<string> | Array<File>
 }
 
-export const postFormData = async (path: string, object: FormDataType): Promise<Dict> => {
+export const postFormData = async (path: string, object: FormDataType): Promise<any> => {
     const formData = new FormData();
     for (const key in object) {
         if (Array.isArray(object[key])) {

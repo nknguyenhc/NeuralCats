@@ -39,6 +39,7 @@ async def login(form: AuthenticationForm, response: Response):
     response.set_cookie(key="token", value=token)
     return {
         "message": "success",
+        "staff": user.is_staff,
     }
 
 def get_user(request: Request):
@@ -57,8 +58,20 @@ async def refresh(request: Request, response: Response):
             "message": "not logged in",
         }
     
-    token = user.refresh()
-    response.set_cookie(key="token", value=token)
+    user.refresh()
+    return {
+        "message": "success",
+        "username": user.username,
+        "staff": user.is_staff,
+    }
+
+@auth_router.get('/logout')
+async def logout(request: Request, response: Response):
+    user = get_user(request)
+    if user is not None:
+        response.delete_cookie("token")
+        user.delete_session()
+    
     return {
         "message": "success",
     }

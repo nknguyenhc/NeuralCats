@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import { useAppDispatch } from './redux/hooks';
 import { setMods } from './redux/mods';
 import { postData } from './fetch/fetch';
+import Status from './components/auth/status';
+import { login } from './redux/auth';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -16,7 +18,15 @@ function App() {
       .then(res => {
         dispatch(setMods(res));
       });
-    postData('/user/refresh', {});
+    postData('/user/refresh', {})
+      .then(res => {
+        if (res.message === 'success') {
+          dispatch(login({
+            username: res.username,
+            isStaff: res.staff,
+          }));
+        }
+      });
   }, [dispatch]);
 
   return (
@@ -25,6 +35,7 @@ function App() {
       <div css={mainCss}>
         <Outlet />
       </div>
+      <Status />
     </div>
   );
 }
