@@ -99,7 +99,11 @@ const Upload = (): JSX.Element => {
       <div css={inputGroupCss}>
         <div css={inputCss}>
           <div>Module code and name:</div>
-          <TextInput value={moduleName} onChange={(e) => setModuleName((e.target as HTMLInputElement).value)} />
+          <TextInput
+            value={moduleName}
+            onChange={(e) => setModuleName((e.target as HTMLInputElement).value)}
+            type="text"
+          />
         </div>
         <div css={inputCss}>
           <div>Module materials</div>

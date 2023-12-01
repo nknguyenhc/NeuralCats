@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAppDispatch } from './redux/hooks';
 import { setMods } from './redux/mods';
+import { postData } from './fetch/fetch';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ function App() {
       .then(res => {
         dispatch(setMods(res));
       });
+    postData('/user/refresh', {});
   }, [dispatch]);
 
   return (

@@ -13,6 +13,7 @@ const NavBar = (): JSX.Element => {
     <div css={linkContainerCss}>
       <Link css={navbarItemCss(pathname === "/")} to="/">Home</Link>
       <Link css={navbarItemCss(pathname === "/upload")} to="/upload">Upload</Link>
+      <Link css={navbarItemCss(pathname === "/user/login")} to="/user/login">Login</Link>
       <div css={closeIconCss} onClick={() => setIsClosed(true)}>
         <CloseIcon />
       </div>

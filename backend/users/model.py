@@ -65,16 +65,7 @@ class User:
         new_item = copy(item)
         new_item["token"] = User.hash_password(token)
         new_item["expiry"] = User.get_next_expiry()
-        container.query_items(
-            query="DELETE FROM r WHERE r.username=@username",
-            parameters=[
-                {
-                    "name": "@username",
-                    "value": item["username"],
-                }
-            ],
-            enable_cross_partition_query=True,
-        )
+        container.delete_item(item=item["id"], partition_key=[item["username"], item["token"]])
         container.create_item(body=new_item)
         return User(username), token
     
@@ -93,6 +84,8 @@ class User:
             enable_cross_partition_query=True
         ))
         if len(items) == 0:
+            return None
+        if items[0]["expiry"] < datetime.now().timestamp():
             return None
         
         return User(items[0]["username"])
@@ -117,16 +110,7 @@ class User:
         new_item = copy(item)
         new_item["token"] = User.hash_password(token)
         new_item["expiry"] = User.get_next_expiry()
-        container.query_items(
-            query="DELETE FROM r WHERE r.username=@username",
-            parameters=[
-                {
-                    "name": "@username",
-                    "value": self.username,
-                }
-            ],
-            enable_cross_partition_query=True,
-        )
+        container.delete_item(item=item["id"], partition_key=[item["username"], item["token"]])
         container.create_item(body=new_item)
         return token
 

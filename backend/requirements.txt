@@ -2,7 +2,7 @@ annotated-types==0.6.0
 anyio==3.7.1
 azure-ai-language-questionanswering==1.1.0
 azure-core==1.29.5
-azure-cosmos==4.3.1
+azure-cosmos==4.5.2b1
 azure-storage-blob==12.19.0
 certifi==2022.12.7
 cffi==1.16.0
