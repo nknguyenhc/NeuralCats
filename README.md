@@ -69,3 +69,4 @@ Remember to add the following line to the start of every `.tsx` file for Emotion
 ## Contributors
 
 * [Nguyen Khoi Nguyen](https://github.com/nknguyenhc)
+* [Kai Ting Ho](https://github.com/kaitinghh)
