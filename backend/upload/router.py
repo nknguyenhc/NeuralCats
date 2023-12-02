@@ -3,6 +3,7 @@ from typing import List
 from typing_extensions import Annotated
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.storage.blob import ContainerClient
+from azure.core.exceptions import ResourceNotFoundError
 import os
 from uuid import uuid4
 from users.router import get_user
@@ -78,5 +79,10 @@ async def get_file(request: Request, request_id: str, filename: str):
             "message": "not authorized",
         }
     
-    blob = get_storage().download_blob(f"{request_id}/{filename}")
-    return Response(content=blob.readall())
+    try:
+        blob = get_storage().download_blob(f"{request_id}/{filename}")
+        return Response(content=blob.readall())
+    except ResourceNotFoundError:
+        return {
+            "message": "Not found",
+        }
