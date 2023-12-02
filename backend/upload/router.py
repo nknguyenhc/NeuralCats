@@ -69,3 +69,14 @@ async def get_requests(request: Request, response: Response):
             items,
         )),
     }
+
+@upload_router.get("/{request_id}/{filename}")
+async def get_file(request: Request, request_id: str, filename: str):
+    user = get_user(request)
+    if user is None or not user.is_staff:
+        return {
+            "message": "not authorized",
+        }
+    
+    blob = get_storage().download_blob(f"{request_id}/{filename}")
+    return Response(content=blob.readall())
