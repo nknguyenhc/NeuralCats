@@ -1,30 +1,6 @@
-###LEGACY CODE###
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering import QuestionAnsweringClient
-from openai import OpenAI
-import os
-from dotenv import load_dotenv
+from qna2 import prompt
 
-load_dotenv()
-
-def get_answer(question):
-    with QuestionAnsweringClient(os.environ.get("ENDPOINT"), AzureKeyCredential(os.environ.get("APIKEY"))) as client:
-        output = client.get_answers(
-            question = question,
-            project_name=os.environ.get("KNOWLEDGE_BASE"),
-            deployment_name="production"
-        )
-    print("Q: {}".format(question))
-    print("A: {}".format(output.answers[0].answer))
-    print("Confidence Score: {}".format(output.answers[0].confidence))
-
-def prompt():
-    client = OpenAI()
-
-    completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": """
+content = """
             Unit 23: Generics
                 After taking this unit, students should:
 
@@ -315,9 +291,6 @@ def prompt():
                     System.out.println(o);
                     }
                 You will see the pairs are sorted by the first element.
-        """},
-        {"role": "user", "content": "What are generic methods?"}
-    ]
-    )
+        """
 
-    print(completion.choices[0].message)
+print(prompt(content, 6, "medium"))
