@@ -6,6 +6,7 @@ import Dropdown, { DropdownItemType } from "../dropdown/dropdown";
 import { useSearchParams } from "react-router-dom";
 import Button from "../button/button";
 import LoadingIcon from "../loader/loading-icon";
+import downloadIcon from "./download-icon.png";
 
 const Qna = (): JSX.Element => {
   const mods = useAppSelector(state => state.mods.mods);
@@ -18,6 +19,10 @@ const Qna = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>();
+  const [pdfLinks, setPdfLinks] = useState<{
+    question: string,
+    answer: string,
+  } | undefined>(undefined);
 
   const handleClick = useCallback((mod: string) => {
     setModSelected(mod);
@@ -36,6 +41,10 @@ const Qna = (): JSX.Element => {
       .then(res => res.json())
       .then(res => {
         setData(res);
+        setPdfLinks({
+          question: `/qna/quiz/${res.qid}`,
+          answer: `/qna/quiz/${res.aid}`,
+        });
         setIsLoading(false);
       });
   }, [modSelected]);
@@ -64,6 +73,16 @@ const Qna = (): JSX.Element => {
       </div>
       {isError && <div css={errorCss}>Please select a module!</div>}
       {isLoading && <LoadingIcon />}
+      {pdfLinks && <div css={pdfLinksCss}>
+        <a href={pdfLinks.question} target="_blank" rel="noreferrer" css={pdfLinkCss}>
+          <div>Questions</div>
+          <img src={downloadIcon} alt="download" />
+        </a>
+        <a href={pdfLinks.answer} target="_blank" rel="noreferrer" css={pdfLinkCss}>
+          <div>Answers</div>
+          <img src={downloadIcon} alt="download" />
+        </a>
+      </div>}
       <div>{JSON.stringify(data)}</div>
     </div>
   </div>;
@@ -106,6 +125,29 @@ const moduleSelectorCss = css`
 const errorCss = css`
   font-size: 16px;
   color: red;
+`;
+
+const pdfLinksCss = css`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+`;
+
+const pdfLinkCss = css`
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  img {
+    max-height: 25px;
+    max-width: 25px;
+  }
 `;
 
 export default Qna;
