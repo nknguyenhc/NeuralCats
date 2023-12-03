@@ -15,7 +15,7 @@ const Qna = (): JSX.Element => {
     text: mod.fullname,
     data: mod.code,
   })), [mods]);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [isModError, setIsModError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>();
@@ -23,15 +23,48 @@ const Qna = (): JSX.Element => {
     question: string,
     answer: string,
   } | undefined>(undefined);
+  const difficultyLevelItems: Array<DropdownItemType> = useMemo(() => [
+    {
+      text: "Easy",
+      data: "easy",
+    },
+    {
+      text: "Medium",
+      data: "medium",
+    },
+    {
+      text: "Hard",
+      data: "hard",
+    },
+  ], []);
+  const [difficultySelected, setDifficultySelected] = useState<string | undefined>();
+  const [isDifficultyError, setIsDifficultyError] = useState<boolean>(false);
 
-  const handleClick = useCallback((mod: string) => {
+  const handleModClick = useCallback((mod: string) => {
     setModSelected(mod);
     setSearchParams({ mod });
   }, [setSearchParams]);
 
+  const handleDifficultyClick = useCallback((difficulty: string) => {
+    setDifficultySelected(difficulty);
+    setSearchParams({ difficulty });
+  }, [setSearchParams]);
+
   const handleGet = useCallback(() => {
+    let isError = false;
     if (modSelected === undefined) {
-      setIsError(true);
+      setIsModError(true);
+      isError = true;
+    } else {
+      setIsModError(false);
+    }
+    if (difficultySelected === undefined) {
+      setIsDifficultyError(true);
+      isError = true;
+    } else {
+      setIsDifficultyError(false);
+    }
+    if (isError) {
       return;
     }
 
@@ -40,11 +73,11 @@ const Qna = (): JSX.Element => {
       return;
     }
 
-    setIsError(false);
+    
     setIsLoading(true);
     setData(undefined);
-
-    fetch(`/qna/?mod=${modSelected}`)
+    setPdfLinks(undefined);
+    fetch(`/qna/?mod=${modSelected}&difficulty=${difficultySelected}`)
       .then(res => res.json())
       .then(res => {
         setData(res);
@@ -54,17 +87,18 @@ const Qna = (): JSX.Element => {
         });
         setIsLoading(false);
       });
-
-    
-  }, [modSelected, isLoading]);
+  }, [modSelected, difficultySelected, isLoading]);
 
   useEffect(() => {
     if (searchParams.get('mod') && mods.map(mod => mod.code).includes(searchParams.get('mod')!)) {
-      handleClick(searchParams.get('mod')!);
+      handleModClick(searchParams.get('mod')!);
+      handleDifficultyClick(searchParams.get('difficulty')!);
     }
-  }, [searchParams, mods, handleClick]);
+  }, [searchParams, mods, handleModClick, handleDifficultyClick]);
 
-  const initialItem = () => searchParams.get('mod');
+  const initialModItem = () => searchParams.get('mod');
+
+  const initialDifficultyItem = () => searchParams.get('difficulty');
 
   return <div css={qnaCss}>
     <div css={titleCss}>Get your practice quiz!</div>
@@ -74,13 +108,24 @@ const Qna = (): JSX.Element => {
           <div>Module:</div>
           <Dropdown
             items={modDropdownItems}
-            onSelect={handleClick}
-            initialItem={initialItem}
+            onSelect={handleModClick}
+            initialItem={initialModItem}
           />
         </div>
-        <Button text="Get quiz!" onClick={handleGet} />
+        <div css={moduleSelectorCss}>
+          <div>Difficulty level:</div>
+          <Dropdown
+            items={difficultyLevelItems}
+            onSelect={handleDifficultyClick}
+            initialItem={initialDifficultyItem}
+          />
+        </div>
       </div>
-      {isError && <div css={errorCss}>Please select a module!</div>}
+      <Button text="Get quiz!" onClick={handleGet} />
+      <div css={errorDivCss}>
+        {isModError && <div css={errorCss}>Please select a module!</div>}
+        {isDifficultyError && <div css={errorCss}>Please select a difficulty level!</div>}
+      </div>
       {isLoading && <LoadingIcon />}
       {pdfLinks && <div css={pdfLinksCss}>
         <a href={pdfLinks.question} target="_blank" rel="noreferrer" css={pdfLinkCss}>
@@ -119,9 +164,8 @@ const mainCss = css`
 
 const selectorCss = css`
   display: flex;
-  flex-direction: row;
-  gap: 100px;
-  align-items: center;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const moduleSelectorCss = css`
@@ -129,6 +173,12 @@ const moduleSelectorCss = css`
   flex-direction: row;
   gap: 20px;
   align-items: center;
+`;
+
+const errorDivCss = css`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const errorCss = css`
