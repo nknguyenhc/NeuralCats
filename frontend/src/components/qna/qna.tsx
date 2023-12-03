@@ -37,7 +37,7 @@ const Qna = (): JSX.Element => {
     setIsError(false);
     setIsLoading(true);
     setData(undefined);
-    fetch(`/qna?mod=${modSelected}`)
+    fetch(`/qna/?mod=${modSelected}`)
       .then(res => res.json())
       .then(res => {
         setData(res);

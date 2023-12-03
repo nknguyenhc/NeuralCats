@@ -12,8 +12,7 @@ def content_to_pdf(content, module, header, container):
     Output: string, the id of the pdf file in Azure.
     """
     def html_to_pdf(html_content):
-        config = pdfkit.configuration(wkhtmltopdf=os.environ.get("WKHTMLTOPDF_PATH"))
-        pdfkit.from_string(html_content, "temp.pdf", configuration=config)
+        pdfkit.from_string(html_content, "temp.pdf")
         file_id = str(uuid4())
         blob_client = container.get_blob_client(blob=f"{file_id}.pdf")
         with open("temp.pdf", "rb") as file:
