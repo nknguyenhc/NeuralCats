@@ -42,5 +42,4 @@ Created by NeuralCats
             font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
         }
     </style>""" + markdown(content)
-    print(html_content)
     return html_to_pdf(html_content)
