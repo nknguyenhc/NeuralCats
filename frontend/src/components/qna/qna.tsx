@@ -4,6 +4,9 @@ import { useAppSelector } from "../../redux/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Dropdown, { DropdownItemType } from "../dropdown/dropdown";
 import { useSearchParams } from "react-router-dom";
+import Button from "../button/button";
+import LoadingIcon from "../loader/loading-icon";
+import downloadIcon from "./download-icon.png";
 
 const Qna = (): JSX.Element => {
   const mods = useAppSelector(state => state.mods.mods);
@@ -14,7 +17,12 @@ const Qna = (): JSX.Element => {
   })), [mods]);
   const [isError, setIsError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>();
+  const [pdfLinks, setPdfLinks] = useState<{
+    question: string,
+    answer: string,
+  } | undefined>(undefined);
 
   const handleClick = useCallback((mod: string) => {
     setModSelected(mod);
@@ -27,10 +35,18 @@ const Qna = (): JSX.Element => {
       return;
     }
     setIsError(false);
-
-    fetch(`/qna?mod=${modSelected}`)
+    setIsLoading(true);
+    setData(undefined);
+    fetch(`/qna/?mod=${modSelected}`)
       .then(res => res.json())
-      .then(res => setData(res));
+      .then(res => {
+        setData(res);
+        setPdfLinks({
+          question: `/qna/quiz/${res.qid}`,
+          answer: `/qna/quiz/${res.aid}`,
+        });
+        setIsLoading(false);
+      });
   }, [modSelected]);
 
   useEffect(() => {
@@ -53,9 +69,20 @@ const Qna = (): JSX.Element => {
             initialItem={initialItem}
           />
         </div>
-        <div css={getQuizButtonCss} onClick={handleGet}>Get quiz!</div>
+        <Button text="Get quiz!" onClick={handleGet} />
       </div>
       {isError && <div css={errorCss}>Please select a module!</div>}
+      {isLoading && <LoadingIcon />}
+      {pdfLinks && <div css={pdfLinksCss}>
+        <a href={pdfLinks.question} target="_blank" rel="noreferrer" css={pdfLinkCss}>
+          <div>Questions</div>
+          <img src={downloadIcon} alt="download" />
+        </a>
+        <a href={pdfLinks.answer} target="_blank" rel="noreferrer" css={pdfLinkCss}>
+          <div>Answers</div>
+          <img src={downloadIcon} alt="download" />
+        </a>
+      </div>}
       <div>{JSON.stringify(data)}</div>
     </div>
   </div>;
@@ -95,20 +122,32 @@ const moduleSelectorCss = css`
   align-items: center;
 `;
 
-const getQuizButtonCss = css`
-  padding: 8px;
-  border: 1px #c933ff solid;
-  border-radius: 10px;
-  cursor: pointer;
-
-  &:hover {
-    border: 1px #8f02c2 solid;
-  }
-`;
-
 const errorCss = css`
   font-size: 16px;
   color: red;
+`;
+
+const pdfLinksCss = css`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+`;
+
+const pdfLinkCss = css`
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  img {
+    max-height: 25px;
+    max-width: 25px;
+  }
 `;
 
 export default Qna;

@@ -4,15 +4,19 @@ import { Link, useLocation } from "react-router-dom";
 import CloseIcon from "../icons/close-icon";
 import { useState } from "react";
 import HamburgerIcon from "../icons/hamburger-icon";
+import { useAppSelector } from "../../redux/hooks";
 
 const NavBar = (): JSX.Element => {
   const [isClosed, setIsClosed] = useState<boolean>(false);
   const pathname = useLocation().pathname;
+  const isStaff = useAppSelector(state => state.auth.isStaff);
 
   return <div css={navbarCss(isClosed)}>
     <div css={linkContainerCss}>
       <Link css={navbarItemCss(pathname === "/")} to="/">Home</Link>
       <Link css={navbarItemCss(pathname === "/upload")} to="/upload">Upload</Link>
+      <Link css={navbarItemCss(pathname === "/user/login")} to="/user/login">Login</Link>
+      {isStaff && <Link css={navbarItemCss(pathname === "/requests")} to="/requests">Requests</Link>}
       <div css={closeIconCss} onClick={() => setIsClosed(true)}>
         <CloseIcon />
       </div>
@@ -28,7 +32,8 @@ const navbarCss = (isClosed: boolean) => css`
   width: ${isClosed ? "0px" : "300px"};
   height: 100vh;
   padding: 50px ${isClosed ? "0px" : "70px"};
-  position: relative;
+  position: sticky;
+  top: 0px;
   transition: width 0.3s linear, padding 0.3s linear;
   flex-shrink: 0;
 `;
@@ -59,7 +64,7 @@ const openIconCss = (isClosed: boolean) => css`
   position: absolute;
   top: 10px;
   left: 10px;
-  ${isClosed ? "" : "z-index: -1;"}
+  ${isClosed ? "" : "display: none;"}
 `;
 
 export default NavBar;

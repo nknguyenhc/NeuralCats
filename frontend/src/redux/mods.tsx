@@ -13,7 +13,7 @@ const initialState: ModState = {
   mods: [],
 }
 
-export const counterSlice = createSlice({
+export const modsSlice = createSlice({
   name: 'mods',
   initialState,
   reducers: {
@@ -23,6 +23,6 @@ export const counterSlice = createSlice({
   },
 });
 
-export const { setMods } = counterSlice.actions
+export const { setMods } = modsSlice.actions
 
-export default counterSlice.reducer
+export default modsSlice.reducer
