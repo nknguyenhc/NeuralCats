@@ -38,15 +38,15 @@ app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__
 # root
 @app.get("/")
 async def root():
-    return FileResponse('templates/index.html')
+    return FileResponse(os.path.join(os.path.dirname(__file__), 'templates/index.html'))
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
-    return FileResponse('favicon.ico')
+    return FileResponse(os.path.join(os.path.dirname(__file__), 'favicon.ico'))
 
 @app.get('/manifest.json', include_in_schema=False)
 async def manifest():
-    return FileResponse('manifest.json')
+    return FileResponse(os.path.join(os.path.dirname(__file__), 'manifest.json'))
 
 if __name__ == '__main__':
     if sys.argv[1] == 'model-test':
