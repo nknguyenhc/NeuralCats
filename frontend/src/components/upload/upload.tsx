@@ -75,6 +75,11 @@ const Upload = (): JSX.Element => {
       return;
     }
 
+    // Try to avoid multiple call
+    if (isLoading) {
+      return;
+    }
+
     setIsLoading(true);
     postFormData('/request/', {
       files: files,
@@ -91,7 +96,7 @@ const Upload = (): JSX.Element => {
         setFiles([]);
       }
     });
-  }, [files, moduleName]);
+  }, [files, moduleName, isLoading]);
 
   return <div css={uploadCss}>
     <div css={titleCss}>Upload a module material</div>

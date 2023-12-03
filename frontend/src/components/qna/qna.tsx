@@ -34,9 +34,16 @@ const Qna = (): JSX.Element => {
       setIsError(true);
       return;
     }
+
+    // Try to avoid multiple call
+    if (isLoading) {
+      return;
+    }
+
     setIsError(false);
     setIsLoading(true);
     setData(undefined);
+
     fetch(`/qna/?mod=${modSelected}`)
       .then(res => res.json())
       .then(res => {
@@ -47,7 +54,9 @@ const Qna = (): JSX.Element => {
         });
         setIsLoading(false);
       });
-  }, [modSelected]);
+
+    
+  }, [modSelected, isLoading]);
 
   useEffect(() => {
     if (searchParams.get('mod') && mods.map(mod => mod.code).includes(searchParams.get('mod')!)) {
