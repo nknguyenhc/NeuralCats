@@ -5,6 +5,7 @@ import Qna from "../components/qna/qna";
 import Login from "../components/auth/login";
 import Register from "../components/auth/register";
 import Requests from "../components/requests/requests";
+import Dashboard from "../components/dashboard/dashboard";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: "/requests",
                 element: <Requests />,
+            },
+            {
+                path: "/dashboard",
+                element: <Dashboard />,
             },
         ],
     },

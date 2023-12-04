@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import Modal from "../modal/modal";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/auth";
+import LoadingIcon from "../loader/loading-icon";
 
 const Status = (): JSX.Element => {
   const username = useAppSelector(state => state.auth.username);
@@ -13,6 +14,7 @@ const Status = (): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
   const handleClick = useCallback(() => {
     if (!username) {
@@ -23,11 +25,17 @@ const Status = (): JSX.Element => {
   }, [username, navigate]);
 
   const handleLogout = useCallback(() => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
     fetch('/user/logout')
       .then(res => res.json())
       .then(res => {
         if (res.message === 'success') {
           dispatch(logout());
+          setIsLoggingOut(false);
           setIsModalOpen(false);
         }
       })
@@ -50,7 +58,10 @@ const Status = (): JSX.Element => {
           </div>
           <div>{isStaff ? "Staff" : "Member"}</div>
         </div>
-        <div css={logoutLinkCss} onClick={handleLogout}>Logout</div>
+        <div css={logoutLinkCss} onClick={handleLogout}>
+          Logout
+          {isLoggingOut && <LoadingIcon />}
+        </div>
       </div>
     </Modal>
   </>;
@@ -97,6 +108,10 @@ const modalStatusCss = css`
 
 const logoutLinkCss = css`
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
 
   &:hover {
     text-decoration: underline;

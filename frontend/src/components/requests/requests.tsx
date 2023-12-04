@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
+import LoadingIcon from "../loader/loading-icon";
 
 type FileType = {
   display: string,
@@ -17,6 +18,7 @@ type RequestType = {
 const Requests = (): JSX.Element => {
   const [requests, setRequests] = useState<Array<RequestType>>([]);
   const isStaff = useAppSelector(state => state.auth.isStaff);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isStaff) {
@@ -34,6 +36,7 @@ const Requests = (): JSX.Element => {
             data: `${file.modified}_${file.original}`,
           }))
         })))
+        setIsLoading(false);
       })
   }, [isStaff]);
 
@@ -69,6 +72,7 @@ const Requests = (): JSX.Element => {
         ))}
       </tbody>
     </table>
+    {isLoading && <LoadingIcon />}
   </div>;
 };
 

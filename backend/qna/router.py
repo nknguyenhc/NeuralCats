@@ -149,7 +149,11 @@ async def get_user_quizzes(request: Request):
 
     return {
         "quizzes": list(map(
-            lambda item: item["id"],
+            lambda item: {
+                "id": item["id"],
+                "mod": item["mod"],
+                "difficulty": item["difficulty"],
+            },
             items,
         ))
     }

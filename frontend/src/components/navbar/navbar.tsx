@@ -10,12 +10,17 @@ const NavBar = (): JSX.Element => {
   const [isClosed, setIsClosed] = useState<boolean>(false);
   const pathname = useLocation().pathname;
   const isStaff = useAppSelector(state => state.auth.isStaff);
+  const username = useAppSelector(state => state.auth.username);
 
   return <div css={navbarCss(isClosed)}>
     <div css={linkContainerCss}>
       <Link css={navbarItemCss(pathname === "/")} to="/">Home</Link>
       <Link css={navbarItemCss(pathname === "/upload")} to="/upload">Upload</Link>
-      <Link css={navbarItemCss(pathname === "/user/login")} to="/user/login">Login</Link>
+      {
+        username
+        ? <Link css={navbarItemCss(pathname === "/dashboard")} to="/dashboard">Dashboard</Link>
+        : <Link css={navbarItemCss(pathname === "/user/login")} to="/user/login">Login</Link>
+      }
       {isStaff && <Link css={navbarItemCss(pathname === "/requests")} to="/requests">Requests</Link>}
       <div css={closeIconCss} onClick={() => setIsClosed(true)}>
         <CloseIcon />

@@ -27,7 +27,7 @@ const Dropdown = ({ items, onSelect, initialItem }: {
       const index = items.map(item => item.data).indexOf(initialItem()!);
       setItemText(items[index].text);
     }
-  }, [initialItem, items]);
+  }, [items]);
 
   return <div css={dropdownCss}>
     <div css={inputCss} onClick={() => setIsExpanded(isExpanded => !isExpanded)}>

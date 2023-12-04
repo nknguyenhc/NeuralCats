@@ -42,12 +42,12 @@ const Qna = (): JSX.Element => {
 
   const handleModClick = useCallback((mod: string) => {
     setModSelected(mod);
-    setSearchParams({ mod });
+    setSearchParams(params => ({ ...Object.fromEntries(params.entries()), mod }));
   }, [setSearchParams]);
 
   const handleDifficultyClick = useCallback((difficulty: string) => {
     setDifficultySelected(difficulty);
-    setSearchParams({ difficulty });
+    setSearchParams(params => ({ ...Object.fromEntries(params.entries()), difficulty }));
   }, [setSearchParams]);
 
   const handleGet = useCallback(() => {
@@ -89,16 +89,14 @@ const Qna = (): JSX.Element => {
       });
   }, [modSelected, difficultySelected, isLoading]);
 
-  useEffect(() => {
-    if (searchParams.get('mod') && mods.map(mod => mod.code).includes(searchParams.get('mod')!)) {
-      handleModClick(searchParams.get('mod')!);
-      handleDifficultyClick(searchParams.get('difficulty')!);
-    }
-  }, [searchParams, mods, handleModClick, handleDifficultyClick]);
-
   const initialModItem = () => searchParams.get('mod');
 
   const initialDifficultyItem = () => searchParams.get('difficulty');
+
+  useEffect(() => {
+    initialModItem() && handleModClick(initialModItem()!);
+    initialDifficultyItem() && handleDifficultyClick(initialDifficultyItem()!);
+  }, []);
 
   return <div css={qnaCss}>
     <div css={titleCss}>Get your practice quiz!</div>
