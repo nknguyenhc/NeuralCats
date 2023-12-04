@@ -22,7 +22,7 @@ def content_to_pdf(content, module, header, container):
     content = f"""
 # Module: {module}
 
-Created by NeuralCats
+Created by [NeuralCats](https://neuralcats.azurewebsites.net/)
 
 ## {header}
 

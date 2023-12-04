@@ -21,6 +21,9 @@ def get_container():
 def get_storage():
     return ContainerClient(os.environ.get('STORAGE_NAME'), "quiz", credential=os.environ.get("STORAGE_CORR"))
 
+def get_module_storage():
+    return ContainerClient(os.environ.get('STORAGE_NAME'), "modules", credential=os.environ.get("STORAGE_CORR"))
+
 @qna_router.get("/available-mods")
 async def get_available_mods():
     values = get_container().read_all_items()
@@ -34,17 +37,30 @@ async def get_available_mods():
 
 @qna_router.get("/")
 async def get_qna(mod: str, difficulty: str):
-    numQns = 6 # tenporary placeholder
-    storage = get_storage()
-    response = prompt(storage, numQns, difficulty)
+    if difficulty not in ("easy", "medium", "hard"):
+        return {
+            "detail": "Invalid difficulty level",
+        }
+
+    numQns = 30
+    try:
+        blob = get_module_storage().download_blob(f"{mod}.txt")
+        content = blob.readall().decode()
+    except ResourceNotFoundError:
+        return {
+            "detail": "Resource not found",
+        }
+    response = prompt(content, numQns, difficulty)
+    response = response[response.find("Questions:"):]
+    qna_json = response_to_json(response)
+
     formatted_response = "\n\n".join(response.split("\n"))
     idx = formatted_response.find("Answer Key:")
-    questions = response[10:idx]
-    answers = response[idx+11:]
-
+    questions = formatted_response[10:idx]
+    answers = formatted_response[idx+11:]
+    storage = get_storage()
     pdf_question_id = content_to_pdf(questions, mod, "Questions", storage)
     pdf_answer_id = content_to_pdf(answers, mod, "Answers", storage)
-    qna_json = response_to_json(response)
 
     return {
         "mod": mod,
