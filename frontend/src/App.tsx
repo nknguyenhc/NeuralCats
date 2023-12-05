@@ -7,7 +7,7 @@ import { useAppDispatch } from './redux/hooks';
 import { setMods } from './redux/mods';
 import { postData } from './fetch/fetch';
 import Status from './components/auth/status';
-import { login } from './redux/auth';
+import { load, login } from './redux/auth';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -26,6 +26,7 @@ function App() {
             isStaff: res.staff,
           }));
         }
+        dispatch(load());
       });
   }, [dispatch]);
 

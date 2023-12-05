@@ -13,13 +13,18 @@ type QuizInfo = {
 
 const Dashboard = (): JSX.Element => {
   const username = useAppSelector(state => state.auth.username);
+  const isAuthLoading = useAppSelector(state => state.auth.isLoading);
   const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState<Array<QuizInfo>>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+
     if (!username) {
-      navigate("user/login");
+      navigate("/user/login");
       return;
     }
 
@@ -29,7 +34,7 @@ const Dashboard = (): JSX.Element => {
         setQuizzes(res.quizzes);
         setIsLoading(false);
       });
-  }, [username, navigate]);
+  }, [isAuthLoading, username, navigate]);
 
   return <div css={dashboardCss}>
     <div css={titleCss}>Your quizzes</div>

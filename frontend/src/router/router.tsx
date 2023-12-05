@@ -6,6 +6,7 @@ import Login from "../components/auth/login";
 import Register from "../components/auth/register";
 import Requests from "../components/requests/requests";
 import Dashboard from "../components/dashboard/dashboard";
+import NotFound from "../components/not-found/not-found";
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             {
                 path: "/dashboard",
                 element: <Dashboard />,
+            },
+            {
+                path: "*",
+                element: <NotFound />
             },
         ],
     },

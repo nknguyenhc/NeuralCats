@@ -48,6 +48,11 @@ async def favicon():
 async def manifest():
     return FileResponse(os.path.join(os.path.dirname(__file__), 'manifest.json'))
 
+@app.exception_handler(404)
+@app.exception_handler(405)
+async def handle_not_found(request, exc):
+    return FileResponse(os.path.join(os.path.dirname(__file__), 'templates/index.html'))
+
 if __name__ == '__main__':
     if sys.argv[1] == 'model-test':
         # get_answer("Why does the module chooses Java?")
