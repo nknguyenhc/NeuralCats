@@ -140,6 +140,7 @@ const Qna = (): JSX.Element => {
             items={modDropdownItems}
             onSelect={handleModClick}
             initialItem={initialModItem}
+            width={600}
           />
         </div>
         <div css={moduleSelectorCss}>
@@ -148,6 +149,7 @@ const Qna = (): JSX.Element => {
             items={difficultyLevelItems}
             onSelect={handleDifficultyClick}
             initialItem={initialDifficultyItem}
+            width={300}
           />
         </div>
       </div>

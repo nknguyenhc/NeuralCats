@@ -19,7 +19,7 @@ const Dashboard = (): JSX.Element => {
 
   useEffect(() => {
     if (!username) {
-      navigate("/login");
+      navigate("user/login");
       return;
     }
 

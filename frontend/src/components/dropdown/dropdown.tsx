@@ -8,10 +8,11 @@ export type DropdownItemType = {
   data: string,
 }
 
-const Dropdown = ({ items, onSelect, initialItem }: {
+const Dropdown = ({ items, onSelect, initialItem, width }: {
   items: Array<DropdownItemType>,
   onSelect: (itemData: string) => void,
   initialItem?: () => string | null | undefined,
+  width: number,
 }): JSX.Element => {
   const [itemText, setItemText] = useState<string | undefined>();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -28,7 +29,7 @@ const Dropdown = ({ items, onSelect, initialItem }: {
     }
   }, [items, initialItem]);
 
-  return <div css={dropdownCss}>
+  return <div css={dropdownCss(width)}>
     <div css={inputCss} onClick={() => setIsExpanded(isExpanded => !isExpanded)}>
       <div>
         {itemText && itemText}
@@ -37,7 +38,7 @@ const Dropdown = ({ items, onSelect, initialItem }: {
         <DropdownIcon />
       </div>
     </div>
-    <div css={dropdownListCss(isExpanded)}>
+    <div css={dropdownListCss(isExpanded, width)}>
       {items.map(item => (
         <div
           key={item.data}
@@ -51,10 +52,10 @@ const Dropdown = ({ items, onSelect, initialItem }: {
   </div>;
 };
 
-const dropdownCss = css`
+const dropdownCss = (width: number) => css`
   position: relative;
   cursor: pointer;
-  width: 500px;
+  width: ${width}px;
 `;
 
 const inputCss = css`
@@ -73,7 +74,7 @@ const iconCss = (isExpanded: boolean) => css`
   ${isExpanded ? "rotate: 180deg;" : ""}
 `;
 
-const dropdownListCss = (isExpanded: boolean) => css`
+const dropdownListCss = (isExpanded: boolean, width: number) => css`
   position: absolute;
   top: 100%;
   left: 0px;
@@ -84,7 +85,7 @@ const dropdownListCss = (isExpanded: boolean) => css`
   overflow: hidden;
   border: ${isExpanded ? "1px" : "0px"} black solid;
   border-radius: 5px;
-  width: 500px;
+  width: ${width}px;
   background-color: white;
   z-index: 100;
 `;
