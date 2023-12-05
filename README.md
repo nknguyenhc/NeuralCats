@@ -18,7 +18,7 @@ That is why we developed NeuralCats! Using the power of OpenAI, we hope to syste
 
 ### Generate module-specific quiz
 
-Simply select the module of your choice, and various other settings, and click to get quiz! Our website would generate a quiz to test your understanding across all topics of a module!
+Simply select the module of your choice, and the difficulty level, and click to get quiz! Our website would generate a quiz to test your understanding across all topics of a module!
 
 What's more, you can save the PDF files of the quiz questions and answers, so that you may attempt the quiz at a later time.
 
@@ -55,7 +55,7 @@ The storage is used to store any user-uploaded files and app-generated files, to
 
 4. [Azure Container Registry](https://azure.microsoft.com/en-us/products/container-registry)
 
-Our app is deployed using Docker. The docker container image is stored using this service.
+Our app is deployed using Docker. The Docker container image is stored using this service.
 
 5. [Azure App Service](https://azure.microsoft.com/en-us/products/app-service)
 
@@ -81,7 +81,7 @@ We use Redux to store states that are shared across many sub-pages of our websit
 
 5. [Docker](https://www.docker.com/)
 
-We use Docker to deploy our app, due to its ability to separate the app's operation from an operating system, as a result, we could test out locally whether our app works once deployed.
+We use Docker to deploy our app, due to its ability to separate the app's operation from an operating system, and as a result, we could test out locally whether our app works once deployed.
 
 6. [wkhtmltopdf](https://wkhtmltopdf.org/)
 
@@ -99,9 +99,9 @@ This is our first time integrating OpenAI into our project. We learned to use th
 
 We considered alternative services offered by Azure:
 
-* Azure Text Analytics: This was considered being used to extracting key phrases to form questions. However, we realised that the key phrases were not useful in crafting questions, and the extracted key phrases were not necessary accurate.
+* Azure Text Analytics: This was considered to be used to extract key phrases to form questions. However, we realised that the key phrases were not useful in crafting questions, and the extracted key phrases were not necessarily accurate.
 * Azure Question Answering: This was considered for getting answer from a knowledge base. However, the service was unable to craft multiple-choice questions, as it was a service only to get an answer to a question. Furthermore, the limitation on the amount of knowledge we can store was not sufficient for us to put up a prototype.
-* Azure Search Service: We considered using this to generate incorrect answer to a question. However, it was barely suitable.
+* Azure Search Service: We considered using this to generate incorrect answers to a question. However, it was barely suitable.
 
 In the end, we decided to use OpenAI, because it was capable of responding to almost any prompt. Hence, it was used to generate questions, generate incorrect choices to questions, and give the correct answers to the questions.
 
@@ -127,15 +127,23 @@ We plan to add user progress to each of the quizzes that a user has generated an
 
 Furthermore, we also plan to allow users to untrack quizzes, so that users can discard quizzes of the modules they have already finished.
 
+### Better question generation
+
+As of now, some of the questions generated might not necessarily be useful in assessing one's understanding of the module. This is because OpenAI tends to stick to the examples given in the lecture notes if no further prompting is made.
+
+We plan to enhance our prompt to OpenAI, so that it can craft better questions.
+
 ### Automatic request processing
 
 Currently, our app allows users to request for new modules to be included. Admins can review the modules and the associated files uploaded by the users, but there is no easy way to approve those request. Admins would have to download those files, manually extract texts from those files, and then consolidate and upload the texts to our database.
 
-We plan to automate the approval process, by automatic conversion of files to text content, and upload of the text content onto our database, once an admin has approved a request.
+We plan to automate the approval process, by automatic conversion of files to text content, and automatic upload of the text content onto our database, once an admin has approved a request.
+
+Furthermore, we plan to use better PDF readers, such as those that can perform OCR, so that a wider variety of materials can be accepted.
 
 ### User credentials
 
-As any other apps that have user handling, we plan to allow users to change username or password.
+Similar to any other apps that have user handling, we plan to allow users to change username or password.
 
 ## Testing instructions
 
@@ -145,9 +153,9 @@ Head over to our working prototype located at [https://neuralcats.azurewebsites.
 
 1. In the landing page, select the module dropdown. Select a module of your choice.
 1. Adjust other settings to suit your preferences.
-1. Click "Get quiz".
+1. Click "Get quiz". Note that it might take up to 1 minute to generate a quiz.
 
-The page should generate a quiz, links to two PDF files, one with the questions and one with the answer. You may proceed to attempt the quiz on our website and check your answer on the spot, or save the questions and answers and attempt it at a later time.
+The page should generate a quiz, and links to two PDF files, one with the questions and one with the answer. You may proceed to attempt the quiz on our website and check your answer on the spot, or save the questions and answers and attempt it at a later time.
 
 ### User dashboard
 
