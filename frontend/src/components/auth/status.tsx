@@ -39,7 +39,7 @@ const Status = (): JSX.Element => {
           setIsModalOpen(false);
         }
       })
-  }, [dispatch]);
+  }, [dispatch, isLoggingOut]);
 
   return <>
     <div css={statusCss} onClick={handleClick}>

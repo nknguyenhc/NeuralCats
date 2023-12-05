@@ -17,7 +17,6 @@ const Dropdown = ({ items, onSelect, initialItem }: {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const handleClick = useCallback((item: DropdownItemType) => () => {
-    setItemText(item.text);
     onSelect(item.data);
     setIsExpanded(false);
   }, [onSelect]);
@@ -27,7 +26,7 @@ const Dropdown = ({ items, onSelect, initialItem }: {
       const index = items.map(item => item.data).indexOf(initialItem()!);
       setItemText(items[index].text);
     }
-  }, [items]);
+  }, [items, initialItem]);
 
   return <div css={dropdownCss}>
     <div css={inputCss} onClick={() => setIsExpanded(isExpanded => !isExpanded)}>

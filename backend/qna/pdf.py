@@ -19,7 +19,8 @@ def content_to_pdf(content, module, header, container):
             blob_client.upload_blob(file)
         return file_id
     
-    content = f"""
+    content = "".join(content.split("~question~"))
+    md_content = f"""
 # Module: {module}
 
 Created by [NeuralCats](https://neuralcats.azurewebsites.net/)
@@ -40,5 +41,5 @@ Created by [NeuralCats](https://neuralcats.azurewebsites.net/)
         code {
             font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
         }
-    </style>""" + markdown(content)
+    </style>""" + markdown(md_content)
     return html_to_pdf(html_content)
